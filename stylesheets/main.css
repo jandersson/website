@@ -1,0 +1,39 @@
+body {
+  font-family: OpenSans, Verdana, Helvetica, sans-serif;
+  background-color: #272822;
+}
+
+#name {
+	text-align: center;
+	color:  #6d9fac;
+	border: 3px solid #ccc;
+	padding: 20px;
+	width: 260px;
+	float: left;
+}
+
+.content {
+	width: 470px;
+	height: 500px;
+	border: 0px solid #ccc;
+}
+
+nav {
+	float: left;
+	margin-left: 20px;
+	border: 0px solid;
+}
+
+nav ul {
+	list-style-type: none;
+}
+nav li {
+	float: left;
+}
+nav a {
+	display: block;
+	width: 60px;
+}
+
+a:visited { color: #ccc; }
+a:link { color: #ccc; }
