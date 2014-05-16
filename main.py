@@ -22,27 +22,7 @@ jinja_environment = jinja2.Environment(autoescape=True,
 	loader=jinja2.FileSystemLoader(os.path.join(os.path.dirname(__file__), 'templates')))
 
 about_form ="""
-<html>
-	<head>
-		<link type ="text/css" rel ="stylesheet" href="/stylesheets/main.css" />	
-	</head>
-<body>
-<nav>
-<ul>
-<li><a href = '/'>Home</a></li>
-<li><a href = '/About'>About</a></li>
-<li><a href = '/'>Contact</a></li>
-</ul>
-</nav>
-<article>
-<br>
-<br>
-<a href='/ROT13'>ROT13 Generator</a>
-<br>
-<a href='/Signup'>Signup Page</a>
-</article>
-</body>
-</html>
+
 """
 
 rot13_form="""
@@ -191,9 +171,9 @@ def valid_username(username):
 		
 class About(webapp2.RequestHandler):
     def get(self):
-        self.response.write(about_form)	
+    	template = jinja_environment.get_template('about.html')
+        self.response.out.write(template.render())
 		
-
 app = webapp2.WSGIApplication([('/', MainPage), 
 							   ('/ROT13', ROT13),
 							   ('/Signup', Signup),
