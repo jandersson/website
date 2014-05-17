@@ -214,7 +214,10 @@ class Signup(webapp2.RequestHandler):
 
 		valid_username = self.validate_username(user_username)
 		username_error = ""
-		valid_email = self.validate_email(user_email)
+		if user_email:
+			valid_email = self.validate_email(user_email)
+		else:
+			valid_email = True
 		email_error = ""
 		valid_password = self.validate_password(user_password)
 		password_error = ""
