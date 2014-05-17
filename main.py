@@ -17,12 +17,47 @@
 import webapp2
 import os
 import jinja2
+import re
 
 jinja_environment = jinja2.Environment(autoescape=True,
 	loader=jinja2.FileSystemLoader(os.path.join(os.path.dirname(__file__), 'templates')))
 
-about_form ="""
+workout_form = """
+<html>
+	<head>
+	</head>
+	<body>
+		<form action="/workout_submit">
+			<label>
+				Plank Time:
+				<input name="plank">
+			</label>
 
+			<label>
+				Leg Raises:
+				<input name="leg raises">
+			</label>
+
+			<label>
+				Pushups:
+				<input name="pushups">
+			</label>
+
+			<input type="submit">
+		</form>
+	</body>
+</html>
+"""
+
+workout_stats_form = """
+<html>
+	<head>
+	</head>
+	<body>
+		<p>Plank: %(plank)s </p>
+		<p>Leg Raises: %(leg_raises)s </p>
+	</body>
+</html>
 """
 
 rot13_form="""
@@ -59,39 +94,50 @@ Enter some text below
 
 signup_form = """
 <html>
-<head>
-	<link type ="text/css" rel ="stylesheet" href="/stylesheets/main.css" />
-</head>
-<body>
-<form method = "post">
+	<head>
+		<link type ="text/css" rel ="stylesheet" href="/stylesheets/main.css" />
+	</head>
+	<body>
+		<form method = "post">
 
-Want to sign up?
+			Want to sign up?
 
-<br>
+			<br>
+			<label>
+			Username
+			<input type = "text" name = "username" value="%(username)s">
+			%(username_error)s
+			</label>
+			
+			<br>
+			<label>
+			Password 
+			<input type = "password" name = "password">
+			%(password_error)s
+			</label>
+			
+			<br>
+			<label>
+			Verify Password 
+			<input type = "password" name = "verify">
+			%(verify_error)s
+			</label>
 
-Username <input type = "text" name = "username">
+			<br>
+			<label>
+			Email (optional) 
+			<input type = "text" name = "email", value="%(email)s">
+			%(email_error)s
+			</label>
+			<br>
 
-<br>
+			<input type = "submit">
+		</form>
 
-Password <input type = "password" name = "password">
+		<br>
 
-<br>
-
-Verify Password <input type = "password" name = "verify">
-
-<br>
-
-Email (optional) <input type = "text" name = "email">
-
-<br>
-
-<input type = "submit">
-</form>
-
-<br>
-
-<a href = '/'>Home</a>
-</body>
+		<a href = '/'>Home</a>
+	</body>
 </html>
 """
 
@@ -102,6 +148,17 @@ class MainPage(webapp2.RequestHandler):
 
     def post(self):
     	self.response.out.write("Thanks! That's a totally valid day!")
+
+class Workout(webapp2.RequestHandler):
+	def get(self):
+		self.response.out.write(workout_form)
+
+class WorkoutStats(webapp2.RequestHandler):
+	def get(self):
+		plank = self.request.get("plank")
+		leg_raises = self.request.get("leg raises")
+		pushups = self.request.get("pushups")
+		self.response.out.write(plank)
 
 class ROT13(webapp2.RequestHandler):
 	def write_form(self, cyphertext = ""):
@@ -114,11 +171,75 @@ class ROT13(webapp2.RequestHandler):
 		cyphertext = escape_html(cyphertext)
 		self.write_form(cyphertext)
 
-class Signup(webapp2.RequestHandler):
+class Welcome(webapp2.RequestHandler):
 	def get(self):
-		self.response.out.write(signup_form)
+		username = self.request.get("username")
+		self.response.out.write("Welcome " + username)
+
+class Signup(webapp2.RequestHandler):
+	def write_form(self, form, username_error = "", password_error = "", email_error = "",
+	verify_error = "", username = "", email = ""):
+		self.response.out.write(form % {'username_error':username_error,
+										'password_error':password_error,
+										'email_error':email_error,
+										'verify_error':verify_error,
+										'email':email,
+										'username':username})
+
+	def validate_username(self, username):
+		user_re = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
+		return user_re.match(username)
+
+	def validate_email(self, email):
+		email_re = re.compile(r"^[\S]+@[\S]+\.[\S]+$")
+		return email_re.match(email)
+
+	def validate_password(self, password):
+		password_re = re.compile(r"^.{3,20}$")
+		return password_re.match(password)
+
+	def validate_verify(self, password, verify):
+		if password == verify:
+			return True
+		else:
+			return None
+
+	def get(self):
+		self.write_form(signup_form)
 	def post(self):
-		self.response.out.write("Thanks for the totally valid input")
+		user_username = self.request.get("username")
+		user_password = self.request.get("password")
+		user_verify = self.request.get("verify")
+		user_email = self.request.get("email")
+
+		valid_username = self.validate_username(user_username)
+		username_error = ""
+		valid_email = self.validate_email(user_email)
+		email_error = ""
+		valid_password = self.validate_password(user_password)
+		password_error = ""
+		valid_verify = self.validate_verify(user_password,user_verify)
+		verify_error = ""
+
+		errors = False
+		if not valid_username:
+			username_error = "Thats not a valid username"
+			errors = True
+		if not valid_email:
+			email_error = "Never seen an email like that before"
+			errors = True
+		if not valid_password:
+			password_error = "You'll have to do better than that"
+			errors = True
+		if not valid_verify:
+			verify_error = "Your passwords don't match"
+			errors = True
+		if not errors:
+			self.redirect('/welcome?' + "username=" + user_username)
+		else:
+			self.write_form(signup_form, username_error, password_error, email_error, verify_error, username = user_username, email = user_email)
+
+
 
 def make_rot13(s):
 	cypher = ''
@@ -177,7 +298,10 @@ class About(webapp2.RequestHandler):
 app = webapp2.WSGIApplication([('/', MainPage), 
 							   ('/ROT13', ROT13),
 							   ('/Signup', Signup),
-							   ('/About', About)]
+							   ('/About', About),
+							   ('/workout', Workout),
+							   ('/workout_submit', WorkoutStats),
+							   ('/welcome', Welcome)]
 							   , debug=True)
 
 
