@@ -1,21 +1,11 @@
-<html>
-	<head>
-		<link type ="text/css" rel ="stylesheet" href="/stylesheets/main.css" />	
-	</head>
-	<body>
-		<nav>
-			<ul>
-				<li><a href = '/'>Home</a></li>
-				<li><a href = '/About'>About</a></li>
-				<li><a href = '/'>Contact</a></li>
-			</ul>
-		</nav>
-		<article>
-			<br>
-			<br>
-			<a href='/ROT13'>ROT13 Generator</a>
-			<br>
-			<a href='/Signup'>Signup Page</a>
-		</article>
-	</body>
-</html>
+{% extends "base.html" %}
+{% block content %}
+<h2>Udacity Web Development Assignments</h2>
+<a href='/ROT13'>ROT13 Generator</a>
+<br>
+<a href='/Signup'>Signup Page</a>
+<br>
+<a href='/fizzbuzz?n=100'>FizzBuzz</a>
+<br>
+<a href='/shoppinglist'>Shopping List</a>
+{% endblock %}

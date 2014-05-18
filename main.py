@@ -19,7 +19,7 @@ import os
 import jinja2
 import re
 
-jinja_environment = jinja2.Environment(autoescape=True,
+jinja_environment = jinja2.Environment(autoescape=False,
 	loader=jinja2.FileSystemLoader(os.path.join(os.path.dirname(__file__), 'templates')))
 
 workout_form = """
@@ -141,6 +141,20 @@ signup_form = """
 </html>
 """
 
+class Handler(webapp2.RequestHandler):
+	"""
+	Functions taken from Udacity Web Development course
+	"""
+	def write(self, *a, **kw):
+		self.response.out.write(*a, **kw)
+
+	def render_str(self, template, **params):
+		t = jinja_environment.get_template(template)
+		return t.render(params)
+
+	def render(self, template, **kw):
+		self.write(self.render_str(template, **kw))
+
 class MainPage(webapp2.RequestHandler):
     def get(self):
     	template = jinja_environment.get_template('index.html')
@@ -148,6 +162,12 @@ class MainPage(webapp2.RequestHandler):
 
     def post(self):
     	self.response.out.write("Thanks! That's a totally valid day!")
+
+class FizzBuzz(Handler):
+	def get(self):
+		n = self.request.get("n", 0)
+		n = n and int(n)
+		self.render("fizzbuzz.html", n = n)
 
 class Workout(webapp2.RequestHandler):
 	def get(self):
@@ -170,6 +190,10 @@ class ROT13(webapp2.RequestHandler):
 		cyphertext = make_rot13(user_text)
 		cyphertext = escape_html(cyphertext)
 		self.write_form(cyphertext)
+
+class TestPage(Handler):
+	def get(self):
+		self.render("shopping_list.html")
 
 class Welcome(webapp2.RequestHandler):
 	def get(self):
@@ -290,8 +314,10 @@ def escape_html(s):
         s = s.replace(char[0], char[1])
     return s
 
-def valid_username(username):
-	return True
+class ShoppingListHandler(Handler):
+	def get(self):
+		items = self.request.get_all("food")
+		self.render("shopping_list.html", items = items)
 		
 class About(webapp2.RequestHandler):
     def get(self):
@@ -304,7 +330,10 @@ app = webapp2.WSGIApplication([('/', MainPage),
 							   ('/About', About),
 							   ('/workout', Workout),
 							   ('/workout_submit', WorkoutStats),
-							   ('/welcome', Welcome)]
+							   ('/welcome', Welcome),
+							   ('/testpage',TestPage),
+							   ('/fizzbuzz',FizzBuzz),
+							   ('/shoppinglist',ShoppingListHandler)]
 							   , debug=True)
 
 

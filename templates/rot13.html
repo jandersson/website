@@ -1,29 +1,22 @@
-<html>
-	<head>
-		<link type ="text/css" rel ="stylesheet" href="/stylesheets/main.css" />
-	</head>
-	<body>
-		<form method = "post">
+{% extends "base.html" %}
+{% block content %}
+<form method = "post">
 
-			ROT13 Generator:
+	ROT13 Generator:
 
-			<br>
+	<br>
 
-			Enter some text below
+	Enter some text below
 
-			<br>
+	<br>
 
-			<textarea name = "text">
-				%(cyphertext)s
-			</textarea>
+	<textarea name = "text">
+		%(cyphertext)s
+	</textarea>
 
-			<br>
+	<br>
 
-			<input type = "submit">
+	<input type = "submit">
 
-		</form>
-		<br>
-
-		<a href = '/'>Home</a>
-	</body>
-</html>
+</form>
+{% endblock %}
