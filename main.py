@@ -19,6 +19,8 @@ import os
 import jinja2
 import re
 
+from google.appengine.ext import db
+
 jinja_environment = jinja2.Environment(autoescape=False,
 	loader=jinja2.FileSystemLoader(os.path.join(os.path.dirname(__file__), 'templates')))
 
@@ -163,6 +165,20 @@ class MainPage(webapp2.RequestHandler):
     def post(self):
     	self.response.out.write("Thanks! That's a totally valid day!")
 
+class AsciiChandler(Handler):
+	def render_front(self, title="", art="", error=""):
+		self.render("asciichan.html", title=title, art=art, error=error)
+	def get(self):
+		self.render_front()
+	def post(self):
+		title = self.request.get("title")
+		art = self.request.get("art")
+
+		if title and art:
+			self.write("thanks!")
+		else:
+			error = "You need to fill out both fields"
+			self.render_front(title=title, art=art, error=error)
 class FizzBuzz(Handler):
 	def get(self):
 		n = self.request.get("n", 0)
@@ -333,7 +349,8 @@ app = webapp2.WSGIApplication([('/', MainPage),
 							   ('/welcome', Welcome),
 							   ('/testpage',TestPage),
 							   ('/fizzbuzz',FizzBuzz),
-							   ('/shoppinglist',ShoppingListHandler)]
+							   ('/shoppinglist',ShoppingListHandler),
+							   ('/asciichan', AsciiChandler)]
 							   , debug=True)
 
 
