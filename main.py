@@ -24,76 +24,6 @@ from google.appengine.ext import db
 jinja_environment = jinja2.Environment(autoescape=True,
 	loader=jinja2.FileSystemLoader(os.path.join(os.path.dirname(__file__), 'templates')))
 
-workout_form = """
-<html>
-	<head>
-	</head>
-	<body>
-		<form action="/workout_submit">
-			<label>
-				Plank Time:
-				<input name="plank">
-			</label>
-
-			<label>
-				Leg Raises:
-				<input name="leg raises">
-			</label>
-
-			<label>
-				Pushups:
-				<input name="pushups">
-			</label>
-
-			<input type="submit">
-		</form>
-	</body>
-</html>
-"""
-
-workout_stats_form = """
-<html>
-	<head>
-	</head>
-	<body>
-		<p>Plank: %(plank)s </p>
-		<p>Leg Raises: %(leg_raises)s </p>
-	</body>
-</html>
-"""
-
-rot13_form="""
-<html>
-<head>
-	<link type ="text/css" rel ="stylesheet" href="/stylesheets/main.css" />
-</head>
-<body>
-<form method = "post">
-
-ROT13 Generator:
-
-<br>
-
-Enter some text below
-
-<br>
-
-<textarea name = "text">
-%(cyphertext)s
-</textarea>
-
-<br>
-
-<input type = "submit">
-
-</form>
-<br>
-
-<a href = '/'>Home</a>
-</body>
-</html>
-"""
-
 signup_form = """
 <html>
 	<head>
@@ -177,7 +107,7 @@ class AsciiChandler(Handler):
 		
 	def get(self):
 		self.render_front()
-		
+
 	def post(self):
 		title = self.request.get("title")
 		art = self.request.get("art")
@@ -196,27 +126,83 @@ class FizzBuzz(Handler):
 		n = n and int(n)
 		self.render("fizzbuzz.html", n = n)
 
-class Workout(webapp2.RequestHandler):
+class Workout(Handler):
 	def get(self):
-		self.response.out.write(workout_form)
-
-class WorkoutStats(webapp2.RequestHandler):
-	def get(self):
+		self.render("workout.html")
+	def post(self):
 		plank = self.request.get("plank")
 		leg_raises = self.request.get("leg raises")
 		pushups = self.request.get("pushups")
-		self.response.out.write(plank)
+		self.response.out.write(plank)		
 
-class ROT13(webapp2.RequestHandler):
-	def write_form(self, cyphertext = ""):
-		self.response.out.write(rot13_form % {'cyphertext':cyphertext})
+class ROT13(Handler):
+
 	def get(self):
-		self.write_form()
+		self.render("rot13.html")
+
 	def post(self):
 		user_text = self.request.get("text")
-		cyphertext = make_rot13(user_text)
-		cyphertext = escape_html(cyphertext)
-		self.write_form(cyphertext)
+		cyphertext = self.make_rot13(user_text)
+		#cyphertext = self.escape_html(cyphertext)
+		self.render("rot13.html", cyphertext=cyphertext)
+	
+	def escape_html(self, s):
+	    escapes = [["&","&amp;"],
+	    		   ["<","&lt;"],
+	    		   [">","&gt;"],
+	    		   ['"',"&quot;"]]
+	    for char in escapes:
+	        s = s.replace(char[0], char[1])
+	    return s
+
+	def make_rot13(self, s):
+		cypher = ''
+		alphabet = {'a': 'n',
+					'b': 'o',
+					'c': 'p',
+					'd': 'q',
+					'e': 'r',
+					'f': 's',
+					'g': 't',
+					'h': 'u',
+					'i': 'v',
+					'j': 'w',
+					'k': 'x',
+					'l': 'y',
+					'm': 'z',
+					'n': 'a',
+					'o': 'b',
+					'p': 'c',
+					'q': 'd',
+					'r': 'e',
+					's': 'f',
+					't': 'g',
+					'u': 'h',
+					'v': 'i',
+					'w': 'j',
+					'x': 'k',
+					'y': 'l',
+					'z': 'm'}
+		for letter in s:
+			if letter in alphabet:
+				cypher = cypher + alphabet[letter]
+			elif letter.lower() in alphabet:
+				cypher = cypher + alphabet[letter.lower()].upper()
+			else:
+				cypher = cypher + letter
+		return cypher
+
+class Post(db.Model):
+	title = db.StringProperty(required = True)
+	entry = db.TextProperty(required = True)
+	created = db.DateTimeProperty(auto_now_add = True)
+
+class BlogHandler(Handler):
+	def render_front(self, title="", entry="", error=""):
+		self.render("blog.html")
+
+	def get(self):
+		self.render_front()
 
 class TestPage(Handler):
 	def get(self):
@@ -293,54 +279,6 @@ class Signup(webapp2.RequestHandler):
 		else:
 			self.write_form(signup_form, username_error, password_error, email_error, verify_error, username = user_username, email = user_email)
 
-
-
-def make_rot13(s):
-	cypher = ''
-	alphabet = {'a': 'n',
-				'b': 'o',
-				'c': 'p',
-				'd': 'q',
-				'e': 'r',
-				'f': 's',
-				'g': 't',
-				'h': 'u',
-				'i': 'v',
-				'j': 'w',
-				'k': 'x',
-				'l': 'y',
-				'm': 'z',
-				'n': 'a',
-				'o': 'b',
-				'p': 'c',
-				'q': 'd',
-				'r': 'e',
-				's': 'f',
-				't': 'g',
-				'u': 'h',
-				'v': 'i',
-				'w': 'j',
-				'x': 'k',
-				'y': 'l',
-				'z': 'm'}
-	for letter in s:
-		if letter in alphabet:
-			cypher = cypher + alphabet[letter]
-		elif letter.lower() in alphabet:
-			cypher = cypher + alphabet[letter.lower()].upper()
-		else:
-			cypher = cypher + letter
-	return cypher
-
-def escape_html(s):
-    escapes = [["&","&amp;"],
-    		   ["<","&lt;"],
-    		   [">","&gt;"],
-    		   ['"',"&quot;"]]
-    for char in escapes:
-        s = s.replace(char[0], char[1])
-    return s
-
 class ShoppingListHandler(Handler):
 	def get(self):
 		items = self.request.get_all("food")
@@ -356,13 +294,13 @@ app = webapp2.WSGIApplication([('/', MainPage),
 							   ('/Signup', Signup),
 							   ('/About', About),
 							   ('/workout', Workout),
-							   ('/workout_submit', WorkoutStats),
 							   ('/welcome', Welcome),
 							   ('/testpage',TestPage),
 							   ('/fizzbuzz',FizzBuzz),
 							   ('/shoppinglist',ShoppingListHandler),
-							   ('/asciichan', AsciiChandler)]
-							   , debug=True)
+							   ('/asciichan', AsciiChandler),
+							   ('/blog', BlogHandler)
+							   ], debug=True)
 
 
 
