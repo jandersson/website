@@ -193,42 +193,42 @@ class ROT13(Handler):
 		return cypher
 
 class Post(db.Model):
-	title = db.StringProperty(required = True)
+	subject = db.StringProperty(required = True)
 	content = db.TextProperty(required = True)
 	created = db.DateTimeProperty(auto_now_add = True)
 
 class BlogPostHandler(Handler):
-	def render_front(self, title="", content="", title_error="", content_error=""):
-		self.render("newpost.html", title=title, content=content, title_error=title_error, content_error=content_error)
+	def render_front(self, subject="", content="", subject_error="", content_error=""):
+		self.render("newpost.html", subject=subject, content=content, subject_error=subject_error, content_error=content_error)
 
 	def get(self):
 		self.render_front()
 
 	def post(self):
-		title = self.request.get("title")
+		subject = self.request.get("subject")
 		content = self.request.get("content")
 		errors = False
-		title_error=""
+		subject_error=""
 		content_error=""
-		if not title:
+		if not subject:
 			errors = True
-			title_error = "You need a title."
+			subject_error = "You need a subject."
 
 		if not content:
 			errors = True
 			content_error = "Cant be postin' without some content"
 
-		if title and content:
-			new_post = Post(title=title, content=content)
+		if subject and content:
+			new_post = Post(subject=subject, content=content)
 			new_post.put()
 			self.redirect("/blog")
 		else:
-			self.render_front(title=title, content=content, title_error=title_error, content_error=content_error)
+			self.render_front(subject=subject, content=content, subject_error=subject_error, content_error=content_error)
 
 class BlogHandler(Handler):
-	def render_front(self, title="", content="", title_error="", content_error=""):
+	def render_front(self, subject="", content="", subject_error="", content_error=""):
 		posts = db.GqlQuery("SELECT * FROM Post ORDER BY created DESC")
-		self.render("blog.html", title=title, content=content, title_error=title_error, posts=posts, content_error=content_error)
+		self.render("blog.html", subject=subject, content=content, subject_error=subject_error, posts=posts, content_error=content_error)
 	
 	def get(self):
 		self.render_front()
