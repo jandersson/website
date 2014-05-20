@@ -220,10 +220,12 @@ class BlogPostHandler(Handler):
 
 		if subject and content:
 			new_post = Post(subject=subject, content=content)
-			new_post.put()
-			self.redirect("/blog")
+			post_key = new_post.put()
+			self.redirect("/blog/%d" % post_key.id())
 		else:
 			self.render_front(subject=subject, content=content, subject_error=subject_error, content_error=content_error)
+
+
 
 class BlogHandler(Handler):
 	def render_front(self, subject="", content="", subject_error="", content_error=""):
@@ -236,6 +238,10 @@ class BlogHandler(Handler):
 	def post(self):
 		pass
 
+class Permalink(BlogHandler):
+	def get(self, post_id):
+		s = Post.get_by_id(int(post_id))
+		self.render("blog.html", posts=[s])
 
 class TestPage(Handler):
 	def get(self):
@@ -333,7 +339,8 @@ app = webapp2.WSGIApplication([('/', MainPage),
 							   ('/shoppinglist',ShoppingListHandler),
 							   ('/asciichan', AsciiChandler),
 							   ('/blog', BlogHandler),
-							   ('/blog/newpost', BlogPostHandler)
+							   ('/blog/newpost', BlogPostHandler),
+							   ('/blog/(\d+)', Permalink)
 							   ], debug=True)
 
 
