@@ -197,12 +197,45 @@ class Post(db.Model):
 	entry = db.TextProperty(required = True)
 	created = db.DateTimeProperty(auto_now_add = True)
 
-class BlogHandler(Handler):
-	def render_front(self, title="", entry="", error=""):
-		self.render("blog.html")
+class BlogPostHandler(Handler):
+	def render_front(self, title="", entry="", title_error="", entry_error=""):
+		self.render("newpost.html", title=title, entry=entry, title_error=title_error, entry_error=entry_error)
 
 	def get(self):
 		self.render_front()
+
+	def post(self):
+		title = self.request.get("title")
+		entry = self.request.get("entry")
+		errors = False
+		title_error=""
+		entry_error=""
+		if not title:
+			errors = True
+			title_error = "You need a title."
+
+		if not entry:
+			errors = True
+			entry_error = "Cant be postin' without some content"
+
+		if title and entry:
+			new_post = Post(title=title, entry=entry)
+			new_post.put()
+			self.redirect("/blog")
+		else:
+			self.render_front(title=title, entry=entry, title_error=title_error, entry_error=entry_error)
+
+class BlogHandler(Handler):
+	def render_front(self, title="", entry="", title_error="", entry_error=""):
+		posts = db.GqlQuery("SELECT * FROM Post ORDER BY created DESC")
+		self.render("blog.html", title=title, entry=entry, title_error=title_error, posts=posts, entry_error=entry_error)
+	
+	def get(self):
+		self.render_front()
+
+	def post(self):
+		pass
+
 
 class TestPage(Handler):
 	def get(self):
@@ -299,7 +332,8 @@ app = webapp2.WSGIApplication([('/', MainPage),
 							   ('/fizzbuzz',FizzBuzz),
 							   ('/shoppinglist',ShoppingListHandler),
 							   ('/asciichan', AsciiChandler),
-							   ('/blog', BlogHandler)
+							   ('/blog', BlogHandler),
+							   ('/newpost', BlogPostHandler)
 							   ], debug=True)
 
 

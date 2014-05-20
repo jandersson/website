@@ -3,6 +3,13 @@ body {
   background-color: #272822;
   color: #ccc;
 }
+
+.blog#title{
+	float: left;
+}
+.blog#created{
+	float: right;
+}
 .error {
 	color: red;
 }
