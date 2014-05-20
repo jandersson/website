@@ -333,7 +333,7 @@ app = webapp2.WSGIApplication([('/', MainPage),
 							   ('/shoppinglist',ShoppingListHandler),
 							   ('/asciichan', AsciiChandler),
 							   ('/blog', BlogHandler),
-							   ('/newpost', BlogPostHandler)
+							   ('/blog/newpost', BlogPostHandler)
 							   ], debug=True)
 
 
