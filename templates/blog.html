@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>CS253 Blog</h1>
+<a href="/newpost">New Post</a>
+<hr>
+{% for post in posts %}
+	<div class="blog" id='title'>{{post.title}}</div>
+	<div class="blog" id="created">{{post.created}}</div><br>
+	<hr>
+	<div class="blog" id="entry">{{post.entry}}</div>
+{% endfor %}
+{% endblock %}
