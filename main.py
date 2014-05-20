@@ -194,41 +194,41 @@ class ROT13(Handler):
 
 class Post(db.Model):
 	title = db.StringProperty(required = True)
-	entry = db.TextProperty(required = True)
+	content = db.TextProperty(required = True)
 	created = db.DateTimeProperty(auto_now_add = True)
 
 class BlogPostHandler(Handler):
-	def render_front(self, title="", entry="", title_error="", entry_error=""):
-		self.render("newpost.html", title=title, entry=entry, title_error=title_error, entry_error=entry_error)
+	def render_front(self, title="", content="", title_error="", content_error=""):
+		self.render("newpost.html", title=title, content=content, title_error=title_error, content_error=content_error)
 
 	def get(self):
 		self.render_front()
 
 	def post(self):
 		title = self.request.get("title")
-		entry = self.request.get("entry")
+		content = self.request.get("content")
 		errors = False
 		title_error=""
-		entry_error=""
+		content_error=""
 		if not title:
 			errors = True
 			title_error = "You need a title."
 
-		if not entry:
+		if not content:
 			errors = True
-			entry_error = "Cant be postin' without some content"
+			content_error = "Cant be postin' without some content"
 
-		if title and entry:
-			new_post = Post(title=title, entry=entry)
+		if title and content:
+			new_post = Post(title=title, content=content)
 			new_post.put()
 			self.redirect("/blog")
 		else:
-			self.render_front(title=title, entry=entry, title_error=title_error, entry_error=entry_error)
+			self.render_front(title=title, content=content, title_error=title_error, content_error=content_error)
 
 class BlogHandler(Handler):
-	def render_front(self, title="", entry="", title_error="", entry_error=""):
+	def render_front(self, title="", content="", title_error="", content_error=""):
 		posts = db.GqlQuery("SELECT * FROM Post ORDER BY created DESC")
-		self.render("blog.html", title=title, entry=entry, title_error=title_error, posts=posts, entry_error=entry_error)
+		self.render("blog.html", title=title, content=content, title_error=title_error, posts=posts, content_error=content_error)
 	
 	def get(self):
 		self.render_front()
