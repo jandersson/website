@@ -1,0 +1,144 @@
+body {
+  font-family: OpenSans, Verdana, Helvetica, sans-serif;
+  background-color: #272822;
+  color: #ccc;
+}
+
+.blog#title{
+	float: left;
+}
+.blog#created{
+	float: right;
+}
+.error {
+	color: red;
+}
+#name {
+	text-align: center;
+	color:  #6d9fac;
+	border: 3px solid #ccc;
+	padding: 20px;
+	width: 260px;
+	float: left;
+}
+
+textarea {
+	width: 400px;
+	height: 200px;
+	font-family: monospace;
+}
+
+hr {
+	margin: 20px auto;
+}
+
+.art + .art {
+	margin-top: 20px;
+}
+
+.art-title {
+	font-weight: bold;
+	font-size: 17px;
+}
+
+.art-body {
+	margin: 0;
+	font-size: 17px;
+}
+
+input[type=text]{
+	width: 400px;
+	font-size: 20px;
+	padding: 2px;
+}
+
+label {
+	display: block;
+	font-size: 20px;
+}
+.content {
+	width: 470px;
+	height: 500px;
+	border: 0px solid #ccc;
+}
+
+nav {
+	float: left;
+	margin-left: 20px;
+	border: 0px solid;
+}
+
+nav ul {
+	list-style-type: none;
+}
+nav li {
+	float: left;
+}
+nav a {
+	display: block;
+	width: 60px;
+}
+
+a:visited { color: #ccc; }
+a:link { color: #ccc; }
+
+.grid {
+    margin: 0 auto;
+    max-width: 1200px;
+    width: 100%;
+}
+
+.row {
+    width: 100%;
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.col-1 {
+    width: 8.33%;
+}
+
+.col-2 {
+    width: 16.66%;
+}
+
+.col-3 {
+    width: 25%;
+}
+
+.col-4 {
+    width: 33.33%;
+}
+
+.col-5 {
+    width: 41.66%;
+}
+
+.col-6 {
+    width: 50%;
+}
+
+.col-7 {
+    width: 58.33%;
+}
+
+.col-8 {
+    width: 66.66%;
+}
+
+.col-9 {
+    width: 75%;
+}
+
+.col-10 {
+    width: 83.33%;
+}
+
+.col-11 {
+    width: 91.66%;
+}
+
+.col-12 {
+    width: 100%;
+}
