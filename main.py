@@ -11,8 +11,8 @@ Bootstrap(app)
 
 
 @app.route('/')
-def hello():
-    """Return a friendly HTTP greeting."""
+def portfolio():
+    """Return a portfolio page."""
     return render_template('bootstrap-prestructure.html')
 
 
