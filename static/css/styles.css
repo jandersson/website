@@ -11,6 +11,10 @@ body {
     color: #6d9fac;
 }
 
-.text-headline {
+.title-super {
+    font-size: 50px;
+}
 
+.title-logo {
+    margin-top: 20px;
 }
