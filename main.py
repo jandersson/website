@@ -2,7 +2,10 @@
 
 # Import the Flask Framework
 from flask import Flask, render_template
+from flask_bootstrap import Bootstrap
+
 app = Flask(__name__)
+Bootstrap(app)
 # Note: We don't need to call run() since our application is embedded within
 # the App Engine WSGI application server.
 
@@ -10,7 +13,7 @@ app = Flask(__name__)
 @app.route('/')
 def hello():
     """Return a friendly HTTP greeting."""
-    return render_template('portfolio.html')
+    return render_template('bootstrap-prestructure.html')
 
 
 @app.errorhandler(404)
