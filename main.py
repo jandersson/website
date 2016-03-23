@@ -15,6 +15,13 @@ def portfolio():
     """Return a portfolio page."""
     return render_template('bootstrap-prestructure.html')
 
+@app.route('recitation')
+def recitation():
+    """
+    Return the recitation application for DD1368.
+    :return: Jinja2 Template
+    """
+    return render_template('bootstrap-recitation.html')
 
 @app.errorhandler(404)
 def page_not_found(e):
