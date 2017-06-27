@@ -15,7 +15,7 @@ def portfolio():
     """Return a portfolio page."""
     return render_template('bootstrap-prestructure.html')
 
-@app.route('recitation')
+@app.route('/recitation')
 def recitation():
     """
     Return the recitation application for DD1368.
